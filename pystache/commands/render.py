@@ -37,10 +37,14 @@ import sys
 #
 from pystache.common import TemplateNotFoundError
 from pystache.renderer import Renderer
+import pystache.defaults as defaults
 
 
 USAGE = """\
-%prog [-h] template context
+%prog [-h] 
+%prog [-n] template context
+%prog [-e EXTENSION] template context
+%prog [--ext=EXTENSION] template context
 
 Render a mustache template with the given context.
 
@@ -57,7 +61,14 @@ def parse_args(sys_argv, usage):
     args = sys_argv[1:]
 
     parser = OptionParser(usage=usage)
+    parser.add_option("-e", "--ext", dest="TMPL_EXT",default=None, type="string", help="extension for template file (default is 'mustache')")
+    parser.add_option("-n", "--no-ext", dest="USE_EXT",default=True, action="store_false", help="do not append an extension for given template")
     options, args = parser.parse_args(args)
+    
+    if not options.USE_EXT:
+        defaults.TEMPLATE_EXTENSION=False
+    elif options.TMPL_EXT:
+        defaults.TEMPLATE_EXTENSION=options.TMPL_EXT
 
     template, context = args
 
